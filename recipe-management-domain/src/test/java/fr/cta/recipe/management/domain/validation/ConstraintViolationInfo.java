@@ -34,6 +34,7 @@ public class ConstraintViolationInfo {
     }
 
     public static void assertConstraintViolationException(ConstraintViolationException constraintViolationException, ConstraintViolationInfo... constraintViolationInfos) {
+        assertThat(constraintViolationException).isNotNull();
         assertThat(constraintViolationException.getConstraintViolations())
             .map(ConstraintViolationInfo::new)
             .containsExactlyInAnyOrder(constraintViolationInfos);
