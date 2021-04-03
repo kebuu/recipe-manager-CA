@@ -2,7 +2,7 @@ package fr.cta.recipe.management.domain.valueobject;
 
 import fr.cta.recipe.management.domain.entity.Ingredient;
 import fr.cta.recipe.management.domain.entity.IngredientUnit;
-import fr.cta.recipe.management.domain.utils.TestUtils;
+import fr.cta.recipe.management.domain.utils.RandomDomainUtils;
 import fr.cta.recipe.management.domain.validation.ConstraintViolationInfo;
 import org.apache.commons.lang3.RandomUtils;
 import org.assertj.core.api.Assertions;
@@ -31,9 +31,9 @@ class QuantifiedIngredientTest {
 
     @Test
     void shouldValidateEquality() {
-        Ingredient ingredient = TestUtils.randomIngredient();
+        Ingredient ingredient = RandomDomainUtils.randomIngredient();
         float quantity = RandomUtils.nextFloat();
-        IngredientUnit unit = TestUtils.randomIngredientUnit();
+        IngredientUnit unit = RandomDomainUtils.randomIngredientUnit();
         QuantifiedIngredient quantifiedIngredient1 = new QuantifiedIngredient(ingredient, quantity, unit);
         QuantifiedIngredient quantifiedIngredient2 = new QuantifiedIngredient(ingredient, quantity, unit);
 

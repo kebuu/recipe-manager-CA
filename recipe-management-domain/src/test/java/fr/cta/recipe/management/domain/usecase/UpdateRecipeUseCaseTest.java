@@ -3,7 +3,7 @@ package fr.cta.recipe.management.domain.usecase;
 import fr.cta.recipe.management.domain.entity.Recipe;
 import fr.cta.recipe.management.domain.repository.RecipeOwnerRepository;
 import fr.cta.recipe.management.domain.repository.RecipeRepository;
-import fr.cta.recipe.management.domain.utils.TestUtils;
+import fr.cta.recipe.management.domain.utils.RandomDomainUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,7 +22,7 @@ class UpdateRecipeUseCaseTest {
 
     @Test
     void shouldFailUpdateRecipeUseCase_missingOwner() {
-        Recipe recipe = TestUtils.randomRecipe();
+        Recipe recipe = RandomDomainUtils.randomRecipe();
         Mockito.when(recipeOwnerRepository.getOwnerByRecipeId(recipe.getId())).thenReturn(Optional.empty());
 
         IllegalStateException illegalStateException = Assertions.catchThrowableOfType(() -> updateRecipeUseCase.execute(recipe), IllegalStateException.class);
@@ -33,8 +33,8 @@ class UpdateRecipeUseCaseTest {
 
     @Test
     void shouldUpdateRecipeUseCase() {
-        Recipe recipe = TestUtils.randomRecipe();
-        Mockito.when(recipeOwnerRepository.getOwnerByRecipeId(recipe.getId())).thenReturn(Optional.of(TestUtils.randomRecipeOwner()));
+        Recipe recipe = RandomDomainUtils.randomRecipe();
+        Mockito.when(recipeOwnerRepository.getOwnerByRecipeId(recipe.getId())).thenReturn(Optional.of(RandomDomainUtils.randomRecipeOwner()));
 
         updateRecipeUseCase.execute(recipe);
 

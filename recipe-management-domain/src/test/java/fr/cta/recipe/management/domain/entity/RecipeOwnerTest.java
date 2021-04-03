@@ -1,6 +1,6 @@
 package fr.cta.recipe.management.domain.entity;
 
-import fr.cta.recipe.management.domain.utils.TestUtils;
+import fr.cta.recipe.management.domain.utils.RandomDomainUtils;
 import fr.cta.recipe.management.domain.validation.ConstraintViolationInfo;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -27,11 +27,11 @@ class RecipeOwnerTest {
 
     @Test
     void shouldValidateRecipeOwnerCreation_duplicatedRecipeNames() {
-        String duplicatedRecipeName = TestUtils.randomString();
+        String duplicatedRecipeName = RandomDomainUtils.randomString();
         IllegalStateException illegalStateException = catchThrowableOfType(
             () -> new RecipeOwner(
                 UUID.randomUUID(),
-                TestUtils.randomString(),
+                RandomDomainUtils.randomString(),
                 List.of(new RecipeOwner.RecipeInfo(UUID.randomUUID(), duplicatedRecipeName), new RecipeOwner.RecipeInfo(UUID.randomUUID(), duplicatedRecipeName))
             ),
             IllegalStateException.class
@@ -47,8 +47,8 @@ class RecipeOwnerTest {
         IllegalStateException illegalStateException = catchThrowableOfType(
             () -> new RecipeOwner(
                 UUID.randomUUID(),
-                TestUtils.randomString(),
-                List.of(new RecipeOwner.RecipeInfo(duplicatedRecipeId, TestUtils.randomString()), new RecipeOwner.RecipeInfo(duplicatedRecipeId, TestUtils.randomString()))
+                RandomDomainUtils.randomString(),
+                List.of(new RecipeOwner.RecipeInfo(duplicatedRecipeId, RandomDomainUtils.randomString()), new RecipeOwner.RecipeInfo(duplicatedRecipeId, RandomDomainUtils.randomString()))
             ),
             IllegalStateException.class
         );
@@ -63,12 +63,12 @@ class RecipeOwnerTest {
 
         RecipeOwner recipeOwner1 = new RecipeOwner(
             uuid,
-            TestUtils.randomString(),
+            RandomDomainUtils.randomString(),
             List.of()
         );
         RecipeOwner recipeOwner2 = new RecipeOwner(
             uuid,
-            TestUtils.randomString(),
+            RandomDomainUtils.randomString(),
             List.of()
         );
 
@@ -93,9 +93,9 @@ class RecipeOwnerTest {
 
     @Test
     void shouldAddRecipe() {
-        RecipeOwner recipeOwner = TestUtils.randomRecipeOwner();
+        RecipeOwner recipeOwner = RandomDomainUtils.randomRecipeOwner();
 
-        Recipe recipe = TestUtils.randomRecipe();
+        Recipe recipe = RandomDomainUtils.randomRecipe();
         RecipeOwner updatedOwner = recipeOwner.addRecipe(recipe);
 
         Assertions.assertThat(updatedOwner.getRecipeInfos())
@@ -106,11 +106,11 @@ class RecipeOwnerTest {
 
     @Test
     void shouldUpdateRecipe() {
-        RecipeOwner recipeOwner = TestUtils.randomRecipeOwner();
+        RecipeOwner recipeOwner = RandomDomainUtils.randomRecipeOwner();
         int indexOfRecipeToUpdate = RandomUtils.nextInt(0, recipeOwner.getRecipeInfos().size());
         RecipeOwner.RecipeInfo existingRecipeInfo = recipeOwner.getRecipeInfos().get(indexOfRecipeToUpdate);
 
-        Recipe updatedRecipe = TestUtils.randomRecipe().toBuilder()
+        Recipe updatedRecipe = RandomDomainUtils.randomRecipe().toBuilder()
             .id(existingRecipeInfo.getRecipeId())
             .build();
 

@@ -4,7 +4,7 @@ import fr.cta.recipe.management.domain.entity.Recipe;
 import fr.cta.recipe.management.domain.entity.RecipeOwner;
 import fr.cta.recipe.management.domain.repository.RecipeOwnerRepository;
 import fr.cta.recipe.management.domain.repository.RecipeRepository;
-import fr.cta.recipe.management.domain.utils.TestUtils;
+import fr.cta.recipe.management.domain.utils.RandomDomainUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +24,7 @@ class AddRecipeUseCaseTest {
     @Test
     void shouldFailAddRecipeUseCase_missingOwner() {
         UUID ownerId = UUID.randomUUID();
-        Recipe recipe = TestUtils.randomRecipe();
+        Recipe recipe = RandomDomainUtils.randomRecipe();
         AddRecipeUseCase.Data data = new AddRecipeUseCase.Data(
             ownerId,
             recipe
@@ -39,9 +39,9 @@ class AddRecipeUseCaseTest {
 
     @Test
     void shouldAddRecipeUseCase() {
-        RecipeOwner recipeOwner = TestUtils.randomRecipeOwner();
+        RecipeOwner recipeOwner = RandomDomainUtils.randomRecipeOwner();
         UUID ownerId = recipeOwner.getId();
-        Recipe recipe = TestUtils.randomRecipe();
+        Recipe recipe = RandomDomainUtils.randomRecipe();
         AddRecipeUseCase.Data data = new AddRecipeUseCase.Data(
             ownerId,
             recipe

@@ -1,6 +1,6 @@
 package fr.cta.recipe.management.domain.entity;
 
-import fr.cta.recipe.management.domain.utils.TestUtils;
+import fr.cta.recipe.management.domain.utils.RandomDomainUtils;
 import fr.cta.recipe.management.domain.validation.ConstraintViolationInfo;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.assertj.core.api.Assertions;
@@ -17,7 +17,7 @@ class RecipeTest {
 
     @Test
     void shouldCreateRecipe() {
-        Assertions.assertThat(new Recipe(TestUtils.randomString(), List.of(), List.of()).getId()).isNotNull();
+        Assertions.assertThat(new Recipe(RandomDomainUtils.randomString(), List.of(), List.of()).getId()).isNotNull();
     }
 
     @Test

@@ -8,7 +8,7 @@ import org.apache.commons.lang3.RandomUtils;
 import java.util.*;
 import java.util.stream.*;
 
-public final class TestUtils {
+public final class RandomDomainUtils {
 
     public static Ingredient randomIngredient() {
         return new Ingredient(randomString());

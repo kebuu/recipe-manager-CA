@@ -3,7 +3,7 @@ package fr.cta.recipe.management.domain.usecase;
 
 import fr.cta.recipe.management.domain.entity.Recipe;
 import fr.cta.recipe.management.domain.repository.RecipeRepository;
-import fr.cta.recipe.management.domain.utils.TestUtils;
+import fr.cta.recipe.management.domain.utils.RandomDomainUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,7 +22,7 @@ class GetRecipeByIdUseCaseTest {
     @Test
     void shouldGetRecipeById() {
         UUID recipeId = UUID.randomUUID();
-        Recipe recipe = TestUtils.randomRecipe();
+        Recipe recipe = RandomDomainUtils.randomRecipe();
         Optional<Recipe> maybeRecipe = Optional.of(recipe);
         Mockito.when(recipeRepository.getById(recipeId)).thenReturn(maybeRecipe);
 
