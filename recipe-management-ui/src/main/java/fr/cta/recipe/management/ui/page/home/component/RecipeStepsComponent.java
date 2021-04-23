@@ -1,18 +1,18 @@
-package fr.cta.recipe.management.ui.page.main.component;
+package fr.cta.recipe.management.ui.page.home.component;
 
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import fr.cta.recipe.management.ui.ActionDispatcher;
-import fr.cta.recipe.management.ui.page.main.action.MainViewActionDispatcher;
-import fr.cta.recipe.management.ui.page.main.MainViewState;
+import fr.cta.recipe.management.ui.action.AbstractActionDispatcher;
+import fr.cta.recipe.management.ui.action.AppActionDispatcher;
+import fr.cta.recipe.management.ui.page.home.HomeState;
 
-public class RecipeStepsComponent extends Composite<VerticalLayout> implements ActionDispatcher.StateChangeListener<MainViewState> {
+public class RecipeStepsComponent extends Composite<VerticalLayout> implements AbstractActionDispatcher.StateChangeListener<HomeState> {
 
     private final VerticalLayout stepsContainer = new VerticalLayout();
 
-    public RecipeStepsComponent(MainViewActionDispatcher actionDispatcher) {
+    public RecipeStepsComponent(AppActionDispatcher actionDispatcher) {
         actionDispatcher.addStateChangeListener(this);
     }
 
@@ -24,10 +24,10 @@ public class RecipeStepsComponent extends Composite<VerticalLayout> implements A
     }
 
     @Override
-    public void onStateChanged(ActionDispatcher.StateChangeEvent<MainViewState> stateChangeEvent) {
+    public void onStateChanged(AbstractActionDispatcher.StateChangeEvent<HomeState> stateChangeEvent) {
         stepsContainer.removeAll();
 
-        MainViewState newState = stateChangeEvent.newState();
+        HomeState newState = stateChangeEvent.newState();
         Component[] stepComponents = newState.getRecipes().stream()
             .filter(recipe -> recipe.getId().toString().equals(newState.getSelectedRecipeId()))
             .findFirst()

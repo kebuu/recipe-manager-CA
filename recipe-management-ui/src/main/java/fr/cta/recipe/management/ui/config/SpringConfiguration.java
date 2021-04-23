@@ -4,6 +4,7 @@ import fr.cta.recipe.management.domain.entity.Recipe;
 import fr.cta.recipe.management.domain.repository.RecipeRepository;
 import fr.cta.recipe.management.domain.usecase.GetRecipesByOwnerIdUseCase;
 import fr.cta.recipe.management.domain.utils.RandomDomainUtils;
+import fr.cta.recipe.management.ui.action.AppActionDispatcher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -55,5 +56,10 @@ public class SpringConfiguration {
     @Bean
     public GetRecipesByOwnerIdUseCase getRecipesByOwnerIdUseCase(RecipeRepository recipeRepository) {
         return new GetRecipesByOwnerIdUseCase(recipeRepository);
+    }
+
+    @Bean
+    public AppActionDispatcher mainActionDispatcher(GetRecipesByOwnerIdUseCase getRecipesByOwnerIdUseCase) {
+        return new AppActionDispatcher(getRecipesByOwnerIdUseCase);
     }
 }

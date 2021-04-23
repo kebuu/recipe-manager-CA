@@ -1,18 +1,18 @@
-package fr.cta.recipe.management.ui;
+package fr.cta.recipe.management.ui.action;
 
 import java.util.*;
 import java.util.function.Function;
 
-public abstract class ActionDispatcher<STATE, ACTION> {
+public abstract class AbstractActionDispatcher<STATE, ACTION> {
 
     private STATE state;
 
-    private final Set<StateChangeListener<STATE>> stateChangeListeners = new HashSet<>();
+    private final Map<String, StateChangeListener<STATE>> stateChangeListeners = new HashMap<>();
 
     protected abstract STATE initiateState();
     protected abstract STATE doDispatchAction(STATE state, ACTION action);
 
-    protected ActionDispatcher() {
+    protected AbstractActionDispatcher() {
         state = initiateState();
         validateState(state);
     }
@@ -29,15 +29,23 @@ public abstract class ActionDispatcher<STATE, ACTION> {
     }
 
     public void addStateChangeListener(StateChangeListener<STATE> stateStateChangeListener) {
-        stateChangeListeners.add(stateStateChangeListener);
+        addStateChangeListener(stateStateChangeListener.getClass().getSimpleName(), stateStateChangeListener);
+    }
+
+    public void addStateChangeListener(String listenerKey, StateChangeListener<STATE> stateStateChangeListener) {
+        stateChangeListeners.put(listenerKey, stateStateChangeListener);
     }
 
     public void removeStateChangeListener(StateChangeListener<STATE> stateStateChangeListener) {
-        stateChangeListeners.remove(stateStateChangeListener);
+        removeStateChangeListener(stateStateChangeListener.getClass().getSimpleName());
+    }
+
+    public void removeStateChangeListener(String listenerKey) {
+        stateChangeListeners.remove(listenerKey);
     }
 
     private void fireStateChangeEvent(StateChangeEvent<STATE> stateChangeEvent) {
-        stateChangeListeners.forEach(stateChangeListener -> stateChangeListener.onStateChanged(stateChangeEvent));
+        stateChangeListeners.values().forEach(stateChangeListener -> stateChangeListener.onStateChanged(stateChangeEvent));
     }
 
     private void validateState(STATE state) {

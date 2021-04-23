@@ -1,21 +1,22 @@
-package fr.cta.recipe.management.ui.page.main.component;
+package fr.cta.recipe.management.ui.page.home.component;
 
 import com.vaadin.flow.component.Composite;
 import com.vaadin.flow.component.grid.Grid;
-import fr.cta.recipe.management.ui.ActionDispatcher;
-import fr.cta.recipe.management.ui.page.main.MainViewState;
-import fr.cta.recipe.management.ui.page.main.RecipeView;
-import fr.cta.recipe.management.ui.page.main.action.*;
+import fr.cta.recipe.management.ui.action.AbstractActionDispatcher;
+import fr.cta.recipe.management.ui.action.AppActionDispatcher;
+import fr.cta.recipe.management.ui.page.home.HomeState;
+import fr.cta.recipe.management.ui.page.home.action.*;
+import fr.cta.recipe.management.ui.page.home.bean.RecipeView;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class MainViewGrid extends Composite<Grid<RecipeView>> implements ActionDispatcher.StateChangeListener<MainViewState> {
+public class HomeViewGrid extends Composite<Grid<RecipeView>> implements AbstractActionDispatcher.StateChangeListener<HomeState> {
 
-    private final MainViewActionDispatcher actionDispatcher;
+    private final AppActionDispatcher actionDispatcher;
 
-    public MainViewGrid(MainViewActionDispatcher actionDispatcher) {
+    public HomeViewGrid(AppActionDispatcher actionDispatcher) {
         this.actionDispatcher = actionDispatcher;
         actionDispatcher.addStateChangeListener(this);
     }
@@ -30,12 +31,17 @@ public class MainViewGrid extends Composite<Grid<RecipeView>> implements ActionD
                 () -> actionDispatcher.dispatchAction(new RecipeUnselectedInGridAction()));
         });
 
+        recipeGrid.addItemDoubleClickListener(recipeViewItemDoubleClickEvent -> {
+            System.out.println("recipeViewItemDoubleClickEvent");
+            actionDispatcher.dispatchAction(new SelectForEditionRecipeInGridAction(recipeViewItemDoubleClickEvent.getItem().getId()));
+        });
+
         return recipeGrid;
     }
 
     @Override
-    public void onStateChanged(ActionDispatcher.StateChangeEvent<MainViewState> stateChangeEvent) {
-        MainViewState mainViewState = stateChangeEvent.newState();
+    public void onStateChanged(AbstractActionDispatcher.StateChangeEvent<HomeState> stateChangeEvent) {
+        HomeState mainViewState = stateChangeEvent.newState();
         List<RecipeView> recipeViews = mainViewState.getRecipes().stream().map(recipe -> RecipeView.builder()
             .id(recipe.getId().toString())
             .name(recipe.getName())
@@ -44,7 +50,7 @@ public class MainViewGrid extends Composite<Grid<RecipeView>> implements ActionD
         ).collect(Collectors.toList());
 
         Grid<RecipeView> viewGrid = getContent();
-        if (stateChangeEvent.propertyChanged(MainViewState::getRecipes)) {
+        if (stateChangeEvent.propertyChanged(HomeState::getRecipes)) {
             viewGrid.setItems(recipeViews);
         }
 
