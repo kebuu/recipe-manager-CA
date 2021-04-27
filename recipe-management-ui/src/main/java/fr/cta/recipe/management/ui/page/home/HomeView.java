@@ -12,6 +12,7 @@ import fr.cta.recipe.management.ui.page.home.component.RecipeStepsComponent;
 public class HomeView extends VerticalLayout implements BeforeEnterObserver {
 
 	public static final String RECIPE_ID = "recipeId";
+	public static final String FORCE_REFRESH = "forceRefresh";
 
 	private final AppActionDispatcher actionDispatcher;
 
@@ -25,11 +26,14 @@ public class HomeView extends VerticalLayout implements BeforeEnterObserver {
 
 		add(mainViewGrid);
 		add(recipeStepsComponent);
-		actionDispatcher.dispatchAction(new GetAllRecipesAction());
 	}
 
 	@Override
 	public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
+		if (actionDispatcher.getState().getRecipes().isEmpty() || beforeEnterEvent.getLocation().getQueryParameters().getParameters().containsKey(FORCE_REFRESH)) {
+			actionDispatcher.dispatchAction(new GetAllRecipesAction());
+		}
+
 		beforeEnterEvent.getRouteParameters().get(RECIPE_ID)
 			.ifPresent(recipeId -> actionDispatcher.dispatchAction(new SelectRecipeInGridAction(recipeId)));
 	}

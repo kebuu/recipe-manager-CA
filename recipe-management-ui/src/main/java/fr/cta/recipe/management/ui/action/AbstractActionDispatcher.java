@@ -7,7 +7,7 @@ public abstract class AbstractActionDispatcher<STATE, ACTION> {
 
     private STATE state;
 
-    private final Map<String, StateChangeListener<STATE>> stateChangeListeners = new HashMap<>();
+    private final Map<String, StateChangeListener<STATE, ACTION>> stateChangeListeners = new HashMap<>();
 
     protected abstract STATE initiateState();
     protected abstract STATE doDispatchAction(STATE state, ACTION action);
@@ -21,22 +21,26 @@ public abstract class AbstractActionDispatcher<STATE, ACTION> {
         STATE newState = doDispatchAction(state, action);
         validateState(newState);
 
-        if (!state.equals(newState)) {
+        if (shouldFireChangeEvent(newState)) {
             STATE oldState = state;
             state = newState;
-            fireStateChangeEvent(new StateChangeEvent<>(newState, oldState));
+            fireStateChangeEvent(new StateChangeEvent<>(newState, oldState, action));
         }
     }
 
-    public void addStateChangeListener(StateChangeListener<STATE> stateStateChangeListener) {
+    protected boolean shouldFireChangeEvent(STATE newState) {
+        return !state.equals(newState);
+    }
+
+    public void addStateChangeListener(StateChangeListener<STATE, ACTION> stateStateChangeListener) {
         addStateChangeListener(stateStateChangeListener.getClass().getSimpleName(), stateStateChangeListener);
     }
 
-    public void addStateChangeListener(String listenerKey, StateChangeListener<STATE> stateStateChangeListener) {
+    public void addStateChangeListener(String listenerKey, StateChangeListener<STATE, ACTION> stateStateChangeListener) {
         stateChangeListeners.put(listenerKey, stateStateChangeListener);
     }
 
-    public void removeStateChangeListener(StateChangeListener<STATE> stateStateChangeListener) {
+    public void removeStateChangeListener(StateChangeListener<STATE, ACTION> stateStateChangeListener) {
         removeStateChangeListener(stateStateChangeListener.getClass().getSimpleName());
     }
 
@@ -44,7 +48,7 @@ public abstract class AbstractActionDispatcher<STATE, ACTION> {
         stateChangeListeners.remove(listenerKey);
     }
 
-    private void fireStateChangeEvent(StateChangeEvent<STATE> stateChangeEvent) {
+    private void fireStateChangeEvent(StateChangeEvent<STATE, ACTION> stateChangeEvent) {
         stateChangeListeners.values().forEach(stateChangeListener -> stateChangeListener.onStateChanged(stateChangeEvent));
     }
 
@@ -58,13 +62,22 @@ public abstract class AbstractActionDispatcher<STATE, ACTION> {
         return state;
     }
 
-    public interface StateChangeListener<STATE> {
-        void onStateChanged(StateChangeEvent<STATE> stateChangeEvent);
+    public interface StateChangeListener<STATE, ACTION> {
+        void onStateChanged(StateChangeEvent<STATE, ACTION> stateChangeEvent);
     }
 
-    public static record StateChangeEvent<STATE>(STATE newState, STATE oldState) {
+    public static record StateChangeEvent<STATE, ACTION>(STATE newState, STATE oldState, ACTION origin) {
+
         public <PROPERTY> boolean propertyChanged(Function<STATE, PROPERTY> propertyExtractor) {
             return !Objects.equals(propertyExtractor.apply(newState), propertyExtractor.apply(oldState));
+        }
+        public <PROPERTY> boolean hasSameProperty(Function<STATE, PROPERTY> propertyExtractor) {
+            return propertyExtractor.apply(newState) == propertyExtractor.apply(oldState);
+        }
+
+        @SafeVarargs
+        public final boolean hasForOriginAnyOf(Class<? extends ACTION>... actionClasses) {
+            return Arrays.stream(actionClasses).anyMatch(actionClass -> origin.getClass().isAssignableFrom(actionClass));
         }
     }
 }

@@ -7,11 +7,10 @@ import java.util.Set;
 
 @Value
 @Builder(toBuilder = true)
-public class HomeState {
+public class AppState {
 
     @Singular Set<Recipe> recipes;
     String selectedRecipeId;
-    boolean enabledEdition;
 
     public Recipe getRecipeForEdition() {
         return recipes.stream()

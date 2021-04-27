@@ -4,11 +4,10 @@ import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import fr.cta.recipe.management.ui.action.AbstractActionDispatcher;
-import fr.cta.recipe.management.ui.action.AppActionDispatcher;
-import fr.cta.recipe.management.ui.page.home.HomeState;
+import fr.cta.recipe.management.ui.action.*;
+import fr.cta.recipe.management.ui.page.home.AppState;
 
-public class RecipeStepsComponent extends Composite<VerticalLayout> implements AbstractActionDispatcher.StateChangeListener<HomeState> {
+public class RecipeStepsComponent extends Composite<VerticalLayout> implements AbstractActionDispatcher.StateChangeListener<AppState, AppAction> {
 
     private final VerticalLayout stepsContainer = new VerticalLayout();
 
@@ -24,10 +23,10 @@ public class RecipeStepsComponent extends Composite<VerticalLayout> implements A
     }
 
     @Override
-    public void onStateChanged(AbstractActionDispatcher.StateChangeEvent<HomeState> stateChangeEvent) {
+    public void onStateChanged(AbstractActionDispatcher.StateChangeEvent<AppState, AppAction> stateChangeEvent) {
         stepsContainer.removeAll();
 
-        HomeState newState = stateChangeEvent.newState();
+        AppState newState = stateChangeEvent.newState();
         Component[] stepComponents = newState.getRecipes().stream()
             .filter(recipe -> recipe.getId().toString().equals(newState.getSelectedRecipeId()))
             .findFirst()

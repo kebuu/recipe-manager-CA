@@ -1,14 +1,12 @@
 package fr.cta.recipe.management.ui.page.edit;
 
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.NativeButton;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
-import fr.cta.recipe.management.ui.page.edit.action.CancelRecipeEdition;
 import fr.cta.recipe.management.ui.action.AppActionDispatcher;
-import fr.cta.recipe.management.ui.page.home.HomeView;
+import fr.cta.recipe.management.ui.page.edit.action.CancelRecipeEditionAction;
 
 import java.util.UUID;
 
@@ -33,8 +31,8 @@ public class EditRecipeView extends FormLayout implements BeforeEnterObserver {
 		NativeButton reset = new NativeButton("Reset");
 		actions.add(save, reset);
 
-		reset.addClickListener(event -> this.actionDispatcher.dispatchAction(new CancelRecipeEdition(recipeId.toString())));
-		save.addClickListener(event -> UI.getCurrent().navigate(HomeView.class));
+		reset.addClickListener(event -> this.actionDispatcher.dispatchAction(new CancelRecipeEditionAction(recipeId.toString())));
+		save.addClickListener(event -> this.actionDispatcher.dispatchAction(new SaveRecipeEditionAction(recipeId, titleField.getValue())));
 
 		add(titleField, actions);
 	}
