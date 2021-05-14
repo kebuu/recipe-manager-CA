@@ -4,6 +4,6 @@ import fr.cta.recipe.management.ui.action.AppAction;
 
 import java.util.UUID;
 
-public record SaveRecipeEditionAction(UUID recipeId, String recipeName) implements AppAction {
+public record UpdateRecipeEditionAction(UUID recipeId, String recipeName) implements AppAction {
 
 }

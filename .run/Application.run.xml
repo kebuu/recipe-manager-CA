@@ -9,7 +9,7 @@
     </extension>
     <option name="SPRING_BOOT_MAIN_CLASS" value="fr.cta.recipe.management.ui.Application" />
     <option name="ALTERNATIVE_JRE_PATH" />
-    <option name="UPDATE_ACTION_UPDATE_POLICY" value="UpdateClassesAndTriggerFile" />
+    <option name="UPDATE_ACTION_UPDATE_POLICY" value="UpdateClassesAndResources" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

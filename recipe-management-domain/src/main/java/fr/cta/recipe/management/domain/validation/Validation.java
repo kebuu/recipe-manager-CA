@@ -14,6 +14,8 @@ public interface Validation {
     static <T> void validate(T beanToValidate) {
         Set<ConstraintViolation<T>> constraintViolations = VALIDATOR.validate(beanToValidate);
 
-        if (!constraintViolations.isEmpty()) throw new ConstraintViolationException(EXCEPTION_MESSAGE, constraintViolations);
+        if (!constraintViolations.isEmpty()) {
+            throw new ConstraintViolationException(EXCEPTION_MESSAGE + ":" + constraintViolations.toString(), constraintViolations);
+        }
     }
 }
