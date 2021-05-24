@@ -1,16 +1,23 @@
 package fr.cta.recipe.management.ui.page.home.component;
 
 import com.vaadin.flow.component.Composite;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.router.*;
-import fr.cta.recipe.management.ui.action.*;
+import com.vaadin.flow.component.grid.contextmenu.GridContextMenu;
+import com.vaadin.flow.router.HighlightConditions;
+import com.vaadin.flow.router.RouteParameters;
+import com.vaadin.flow.router.RouterLink;
+import fr.cta.recipe.management.ui.action.AbstractActionDispatcher;
+import fr.cta.recipe.management.ui.action.AppAction;
+import fr.cta.recipe.management.ui.action.AppActionDispatcher;
+import fr.cta.recipe.management.ui.page.edit.CreateOrUpdateRecipeView;
 import fr.cta.recipe.management.ui.page.home.AppState;
-import fr.cta.recipe.management.ui.page.home.HomeView;
-import fr.cta.recipe.management.ui.page.home.action.SelectForEditionRecipeInGridAction;
+import fr.cta.recipe.management.ui.page.home.action.DeleteRecipeAction;
 import fr.cta.recipe.management.ui.page.home.action.SelectRecipesInGridAction;
 import fr.cta.recipe.management.ui.page.home.bean.RecipeView;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class HomeViewGrid extends Composite<Grid<RecipeView>> implements AbstractActionDispatcher.StateChangeListener<AppState, AppAction> {
@@ -42,23 +49,18 @@ public class HomeViewGrid extends Composite<Grid<RecipeView>> implements Abstrac
 
         recipeGrid.addItemDoubleClickListener(recipeViewItemDoubleClickEvent -> {
             System.out.println("recipeViewItemDoubleClickEvent");
-            actionDispatcher.dispatchAction(new SelectForEditionRecipeInGridAction(recipeViewItemDoubleClickEvent.getItem().getId()));
+            UI.getCurrent().navigate(CreateOrUpdateRecipeView.class, new RouteParameters(Map.of(CreateOrUpdateRecipeView.RECIPE_ID, recipeViewItemDoubleClickEvent.getItem().getId())));
         });
 
         recipeGrid.removeColumnByKey("name");
         recipeGrid.addComponentColumn(recipeView -> {
                 RouterLink linkOnName = new RouterLink(
                     recipeView.getName(),
-                    HomeView.class,
+                    CreateOrUpdateRecipeView.class,
                     new RouteParameters("recipeId", recipeView.getId())
                 );
                 linkOnName.setHighlightCondition(HighlightConditions.locationPrefix("recipes/" + recipeView.getId()));
-//                linkOnName.setHighlightCondition((routerLink, event) -> {
-//                    System.out.println("toto");
-//                    return true;
-//                });
                 linkOnName.setHighlightAction((routerLink, highlight) -> {
-                    System.out.println("setHighlightAction");
                     if (highlight) {
                         routerLink.getElement().getStyle().set("font-weight", "bold");
                     } else {
@@ -68,6 +70,15 @@ public class HomeViewGrid extends Composite<Grid<RecipeView>> implements Abstrac
                 return linkOnName;
             }
         ).setHeader("name");
+
+        GridContextMenu<RecipeView> recipeViewGridContextMenu = recipeGrid.addContextMenu();
+        recipeViewGridContextMenu.addGridContextMenuOpenedListener(event -> {
+            if (event.getItem().isEmpty()) {
+                recipeViewGridContextMenu.close();
+            }
+        });
+        recipeViewGridContextMenu.addItem("Edit", event -> UI.getCurrent().navigate(CreateOrUpdateRecipeView.class, new RouteParameters(Map.of(CreateOrUpdateRecipeView.RECIPE_ID, event.getItem().orElseThrow().getId()))));
+        recipeViewGridContextMenu.addItem("Delete", event -> actionDispatcher.dispatchAction(new DeleteRecipeAction(event.getItem().orElseThrow().getId())));
 
         return recipeGrid;
     }
@@ -83,19 +94,8 @@ public class HomeViewGrid extends Composite<Grid<RecipeView>> implements Abstrac
         ).collect(Collectors.toList());
 
         Grid<RecipeView> viewGrid = getContent();
-        if (!stateChangeEvent.hasForOriginAnyOf(SelectRecipesInGridAction.class)) {
+        if (stateChangeEvent.hasNotForOriginAnyOf(SelectRecipesInGridAction.class)) {
             viewGrid.setItems(recipeViews);
         }
-
-//        Optional<RecipeView> selectedItem = Optional.ofNullable(mainViewState.getSelectedRecipeId())
-//            .flatMap(recipeId -> recipeViews.stream()
-//                .filter(recipeView -> recipeView.getId().equals(recipeId))
-//                .findFirst()
-//            );
-//
-//        selectedItem.ifPresentOrElse(
-//            viewGrid::select,
-//            viewGrid::deselectAll
-//        );
     }
 }

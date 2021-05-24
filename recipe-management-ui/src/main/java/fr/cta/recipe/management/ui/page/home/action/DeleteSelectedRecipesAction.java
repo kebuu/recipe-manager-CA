@@ -1,4 +1,4 @@
-package fr.cta.recipe.management.ui.page.home;
+package fr.cta.recipe.management.ui.page.home.action;
 
 import fr.cta.recipe.management.ui.action.AppAction;
 import fr.cta.recipe.management.ui.page.home.bean.RecipeView;

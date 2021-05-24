@@ -39,7 +39,9 @@ public class SpringConfiguration {
 
             @Override
             public Optional<Recipe> getById(UUID recipeId) {
-                return Optional.empty();
+                return recipesReference.get().stream()
+                    .filter(recipe -> recipe.getId().equals(recipeId))
+                    .findFirst();
             }
 
             @Override
@@ -113,8 +115,13 @@ public class SpringConfiguration {
     }
 
     @Bean
+    public GetRecipeByIdUseCase getRecipeByIdUseCase(RecipeRepository recipeRepository) {
+        return new GetRecipeByIdUseCase(recipeRepository);
+    }
+
+    @Bean
     @UIScope
-    public AppActionDispatcher appActionDispatcher(GetRecipesByOwnerIdUseCase getRecipesByOwnerIdUseCase, UpdateRecipeUseCase updateRecipeUseCase, AddRecipeUseCase addRecipeUseCase, DeleteRecipeUseCase deleteRecipeUseCase) {
-        return new AppActionDispatcher(getRecipesByOwnerIdUseCase, updateRecipeUseCase, addRecipeUseCase, deleteRecipeUseCase);
+    public AppActionDispatcher appActionDispatcher(GetRecipesByOwnerIdUseCase getRecipesByOwnerIdUseCase, UpdateRecipeUseCase updateRecipeUseCase, AddRecipeUseCase addRecipeUseCase, DeleteRecipeUseCase deleteRecipeUseCase, GetRecipeByIdUseCase getRecipeByIdUseCase) {
+        return new AppActionDispatcher(getRecipesByOwnerIdUseCase, updateRecipeUseCase, addRecipeUseCase, deleteRecipeUseCase, getRecipeByIdUseCase);
     }
 }

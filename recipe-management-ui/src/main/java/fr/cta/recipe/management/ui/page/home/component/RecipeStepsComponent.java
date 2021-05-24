@@ -1,10 +1,14 @@
 package fr.cta.recipe.management.ui.page.home.component;
 
-import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Composite;
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import fr.cta.recipe.management.ui.action.*;
+import fr.cta.recipe.management.ui.action.AbstractActionDispatcher;
+import fr.cta.recipe.management.ui.action.AppAction;
+import fr.cta.recipe.management.ui.action.AppActionDispatcher;
 import fr.cta.recipe.management.ui.page.home.AppState;
 
 public class RecipeStepsComponent extends Composite<VerticalLayout> implements AbstractActionDispatcher.StateChangeListener<AppState, AppAction> {
@@ -27,14 +31,13 @@ public class RecipeStepsComponent extends Composite<VerticalLayout> implements A
         stepsContainer.removeAll();
 
         AppState newState = stateChangeEvent.newState();
-        Component[] stepComponents = newState.getRecipes().stream()
-            .filter(recipe -> recipe.getId().toString().equals(newState.getSelectedRecipeId()))
-            .findFirst()
-            .stream()
-            .flatMap(recipe -> recipe.getSteps().stream())
-            .map(Paragraph::new)
-            .toArray(Component[]::new);
 
-        stepsContainer.add(stepComponents);
+        newState.getUniqueSelectedRecipe().ifPresent(recipe -> {
+            Component[] stepComponents = recipe.getSteps().stream()
+                                             .map(Paragraph::new)
+                                             .toArray(Component[]::new);
+
+            stepsContainer.add(stepComponents);
+        });
     }
 }

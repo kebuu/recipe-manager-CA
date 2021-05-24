@@ -32,12 +32,13 @@ public abstract class AbstractActionDispatcher<STATE, ACTION> {
         return !state.equals(newState);
     }
 
-    public void addStateChangeListener(StateChangeListener<STATE, ACTION> stateStateChangeListener) {
-        addStateChangeListener(stateStateChangeListener.getClass().getSimpleName(), stateStateChangeListener);
+    public Registration addStateChangeListener(StateChangeListener<STATE, ACTION> stateStateChangeListener) {
+        return addStateChangeListener(stateStateChangeListener.getClass().getSimpleName(), stateStateChangeListener);
     }
 
-    public void addStateChangeListener(String listenerKey, StateChangeListener<STATE, ACTION> stateStateChangeListener) {
+    public Registration addStateChangeListener(String listenerKey, StateChangeListener<STATE, ACTION> stateStateChangeListener) {
         stateChangeListeners.put(listenerKey, stateStateChangeListener);
+        return () -> removeStateChangeListener(listenerKey);
     }
 
     public void removeStateChangeListener(StateChangeListener<STATE, ACTION> stateStateChangeListener) {
@@ -79,5 +80,14 @@ public abstract class AbstractActionDispatcher<STATE, ACTION> {
         public final boolean hasForOriginAnyOf(Class<? extends ACTION>... actionClasses) {
             return Arrays.stream(actionClasses).anyMatch(actionClass -> origin.getClass().isAssignableFrom(actionClass));
         }
+
+        @SafeVarargs
+        public final boolean hasNotForOriginAnyOf(Class<? extends ACTION>... actionClasses) {
+            return !hasForOriginAnyOf(actionClasses);
+        }
+    }
+
+    public interface Registration {
+        void stopListening() throws RuntimeException;
     }
 }
